@@ -7,7 +7,8 @@ output:
 
 
 ## Loading and preprocessing the data
-```{r, echo = TRUE}
+
+```r
 #Checks if file exists and download the file:
 zipUrl <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 zipFile <- "activity.zip"
@@ -25,30 +26,50 @@ activity <- read.csv("activity.csv", header = TRUE, sep = ",", na.strings = "NA"
 
 #Process data
 activity$date <- as.POSIXct(activity$date, format = "%Y-%m-%d")
+```
 
+```
+## Warning in strptime(x, format, tz = tz): unknown timezone 'zone/tz/2018c.
+## 1.0/zoneinfo/America/Chicago'
+```
+
+```r
 activity_data <- data.frame(activity)
-
 ```
 
 
 ## What is mean total number of steps taken per day?
-```{r, echo=TRUE}
 
+```r
 #Number of steps per day
 steps_per_day <- aggregate(activity_data$steps, by = list(activity_data$date), FUN = sum, na.rm = TRUE)
 
 hist(steps_per_day$x, main = "Total number of steps taken each day", xlab = "Total steps per day")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
 #Mean of the total number of steps taken per day
 mean(steps_per_day$x)
+```
 
+```
+## [1] 9354.23
+```
+
+```r
 #Median of the total number of steps taken per day
 median(steps_per_day$x)
+```
 
+```
+## [1] 10395
 ```
 
 ## What is the average daily activity pattern?
-```{r, echo=TRUE}
+
+```r
 #Average number of steps per interval
 steps_per_interval <- aggregate(activity_data$steps, by = list(activity_data$interval), FUN = mean, na.rm = TRUE)
 
@@ -56,20 +77,34 @@ steps_per_interval <- aggregate(activity_data$steps, by = list(activity_data$int
 plot(steps_per_interval$Group.1, steps_per_interval$x, type = "l",
      main = "Average number of steps per interval", 
      xlab = "Interval", ylab = "Avg. number of steps")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
 #Find interval with maximum number of steps
 position <- which(steps_per_interval$x == max(steps_per_interval$x))
 
 steps_per_interval[position, 1]
+```
 
+```
+## [1] 835
 ```
 
 
 ## Imputing missing values
-```{r, echo=TRUE}
+
+```r
 #Sum of missing values
 sum(is.na(activity_data$steps))
+```
 
+```
+## [1] 2304
+```
+
+```r
 #Replace missing values with mean of the day
 
 na_position <- which(is.na(activity_data$steps))
@@ -83,15 +118,30 @@ activity_data[na_position, "steps"] <- missing_mean
 steps_per_day <- aggregate(activity_data$steps, by = list(activity_data$date), FUN = sum)
 
 hist(steps_per_day$x, main = "Total number of steps taken each day", xlab = "Total steps per day")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+```r
 #Mean of the total number of steps taken per day
 mean(steps_per_day$x)
+```
 
+```
+## [1] 10766.19
+```
+
+```r
 #Median of the total number of steps taken per day
 median(steps_per_day$x)
 ```
+
+```
+## [1] 10766.19
+```
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r, echo=TRUE}
+
+```r
 library(lattice)
 
 #Weekday and weekend variables
@@ -112,7 +162,7 @@ xyplot(mean ~ interval | daytype, steps_per_weekday,
        xlab="Interval", 
        ylab="Number of steps", 
        layout=c(1,2))
-
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
